@@ -72,41 +72,40 @@ await Cart.findOneAndUpdate({ user: id }, { $set: { items: [] } });
 };
 
 exports.checkout = async (req, res) => {
-  console.log('Checkout Request Body:', req.body);
-  console.log('User from token:', req.user);
+  const userId = req.user?.id;
 
   try {
-    if (!req.user || !req.user.id) {
-      console.log('User not authenticated.');
-      return res.status(401).json({ message: "User not authenticated" });
-    }
+      if (!userId) return res.status(401).json({ message: "User not authenticated" });
 
-    const userId = req.user.id;
-    console.log('User ID from token:', userId);
-    const cart = await Cart.findOne({ user: userId });
+      const { shippingAddress, paymentMethod } = req.body;
+      const cart = await Cart.findOne({ user: userId }).populate('items');
 
-    if (!cart) {
-      console.log('Your cart is empty');
-      return res.status(404).json({ message: "Cart not found" });
-    }
+      if (!cart || cart.items.length === 0) return res.status(404).json({ message: "Cart is empty or not found" });
 
-    // Create a new Order object from the cart data
-    const order = new Order({
-      user: userId, 
-      product: cart.product, 
-      price: cart.price,
-      quantity: cart.quantity 
-    });
+      // Calculate total price or pass it from the client-side (ensure validation)
+      const totalPrice = cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-    const savedOrder = await order.save();
-    console.log('cart created successfully.');
+      const order = new Order({
+          user: userId,
+          items: cart.items,
+          shippingAddress,
+          paymentMethod,
+          totalPrice,
+      });
 
-    res.status(200).json({ message: "cart created successfully", order: savedOrder });
+      const savedOrder = await order.save();
+
+      // Optionally, clear the user's cart
+      await Cart.findOneAndUpdate({ user: userId }, { $set: { items: [] }});
+
+      res.status(200).json({ message: "Order created successfully", order: savedOrder });
   } catch (error) {
-    console.error("Error in checkout:", error);
-    res.status(500).json({ message: "Error processing checkout", error: error.message });
+      console.error("Error in checkout:", error);
+      res.status(500).json({ message: "Error processing checkout", error: error.message });
   }
 };
+
+
 
 // Retrieves all orders for the authenticated user
 exports.listOrders = async (req, res) => {

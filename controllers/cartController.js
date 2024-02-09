@@ -71,12 +71,18 @@ exports.getUserCartItems = async (req, res) => {
             }
             return {
                 _id: item._id,
-                image: item.product.image,
+                images: item.product.images,
                 name: item.product.name,
                 description: item.product.description,
                 quantity: item.quantity,
                 price: item.price
             };
+
+            // return {
+            //     ...item,
+            //     images: item.product.images
+            // }
+
         }).filter(item => item !== null); 
 
         res.status(200).json({ cartItems });

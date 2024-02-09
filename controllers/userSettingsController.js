@@ -33,3 +33,4 @@ exports.updateUserSettings = async (req, res) => {
         res.status(500).send({ message: 'Error updating user settings', error: error.message });
     }
 };
+

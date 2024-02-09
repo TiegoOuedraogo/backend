@@ -22,6 +22,7 @@ const reviewsRoutes = require('./routes/reviewsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const privateRoutes = require('./routes/privateRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const userProfileRoutes = require('./routes/userProfileRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/promotions', promotionsRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', userProfileRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
