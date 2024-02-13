@@ -5,7 +5,7 @@ const categoryController = require('../controllers/categoriesController');
 const { protect, admin } = require('../middlewares/authMiddleware'); 
 
 // Fetch all categories
-router.get('/', categoryController.getAllCategories);
+router.get('/items', categoryController.getAllCategories);
 
 // Fetch a single category by ID
 router.get('/:id', categoryController.getCategoryById);
@@ -23,3 +23,5 @@ router.put('/:id', categoryController.updateCategoryById);
 router.delete('/:id', categoryController.deleteCategoryById);
 
 module.exports = router;
+
+

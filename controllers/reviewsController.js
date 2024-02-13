@@ -11,7 +11,7 @@ const addReviewToProduct = async (productId, reviewId) => {
         );
     } catch (error) {
         console.error('Error adding review to product:', error);
-        throw error;
+        throw new Error('Error adding review to product');
     }
 };
 
@@ -20,21 +20,17 @@ exports.createReview = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Create a new review
-        const newReview = new Review({
-            product: productId,
-            user: userId,
-            rating: rating,
-            text: text,
-        });
+        const productExists = await Product.exists({ _id: productId });
+        if (!productExists) {
+            return res.status(404).send({ message: 'Product not found' });
+        }
 
-        // Save the new review
-        const review = await newReview.save();
+        const review = new Review({ product: productId, user: userId, rating, text });
+        const savedReview = await review.save();
 
-        // Add the review to the product
-        await addReviewToProduct(productId, review._id);
+        await addReviewToProduct(productId, savedReview._id);
 
-        res.status(201).json(review);
+        res.status(201).json(savedReview);
     } catch (error) {
         console.error('Error creating review:', error);
         res.status(500).send({ message: 'Error creating review', error: error.message });
@@ -42,16 +38,10 @@ exports.createReview = async (req, res) => {
 };
 
 exports.getProductReviews = async (req, res) => {
+    const { productId } = req.params;
+
     try {
-        const productId = req.params.productId; 
-
-        // Find reviews for the given product ID
         const reviews = await Review.find({ product: productId }).populate('user', 'username');
-
-        if (!reviews) {
-            return res.status(404).send({ message: 'Reviews not found for this product.' });
-        }
-
         res.status(200).json(reviews);
     } catch (error) {
         console.error('Error fetching product reviews:', error);
@@ -59,65 +49,19 @@ exports.getProductReviews = async (req, res) => {
     }
 };
 
-exports.createReview = async (req, res) => {
-    try {
-        const { productId, rating, text } = req.body; 
-        const userId = req.user.id; 
-
-        // Check if the product exists
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).send({ message: 'Product not found' });
-        }
-
-        // Create a new review
-        const review = new Review({
-            product: productId,
-            user: userId,
-            rating: rating,
-            text: text
-        });
-
-        // Save the new review
-        await review.save();
-
-        await Product.findByIdAndUpdate(
-            productId,
-            { $push: { reviews: review._id } },
-            { new: true, useFindAndModify: false }
-        );
-
-        res.status(201).json(review);
-    } catch (error) {
-        console.error('Error creating review:', error);
-        res.status(500).send({ message: 'Error creating review', error: error.message });
-    }
-};
-
 exports.updateReview = async (req, res) => {
-    const reviewId = req.params.id; 
-    const userId = req.user.id; 
-    const { rating, text } = req.body; 
+    const { rating, text } = req.body;
+    const { id: reviewId } = req.params;
+    const userId = req.user.id;
 
     try {
-        // Fetch the review by ID
-        const review = await Review.findById(reviewId);
-
-        // Check if review exists
+        const review = await Review.findOne({ _id: reviewId, user: userId });
         if (!review) {
-            return res.status(404).send({ message: 'Review not found' });
+            return res.status(404).send({ message: 'Review not found or user not authorized' });
         }
 
-        // Check if the user making the request is the one who created the review
-        if (review.user.toString() !== userId) {
-            return res.status(401).send({ message: 'User not authorized to update this review' });
-        }
-
-        // Update the review
         review.rating = rating;
         review.text = text;
-
-        // Save the updated review
         const updatedReview = await review.save();
 
         res.status(200).json(updatedReview);
@@ -128,26 +72,16 @@ exports.updateReview = async (req, res) => {
 };
 
 exports.deleteReview = async (req, res) => {
-    const reviewId = req.params.id; 
-    const userId = req.user.id; 
+    const { id: reviewId } = req.params;
+    const userId = req.user.id;
 
     try {
-        // Fetch the review by ID
         const review = await Review.findById(reviewId);
-
-        // Check if review exists
-        if (!review) {
-            return res.status(404).send({ message: 'Review not found' });
+        if (!review || (review.user.toString() !== userId && req.user.role !== 'admin')) {
+            return res.status(404).send({ message: 'Review not found or user not authorized' });
         }
 
-        // Check if the user making the request is the one who created the review
-        if (review.user.toString() !== userId && req.user.role !== 'admin') {
-            return res.status(401).send({ message: 'User not authorized to delete this review' });
-        }
-
-        // Delete the review
         await review.remove();
-
         res.status(200).send({ message: 'Review deleted successfully' });
     } catch (error) {
         console.error('Error deleting review:', error);

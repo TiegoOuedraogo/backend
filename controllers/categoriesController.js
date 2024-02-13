@@ -20,6 +20,7 @@ exports.createCategory = async (req, res) => {
 };
 // Fetch all categories
 exports.getAllCategories = async (req, res) => {
+    console.log('getAllCategories called');
     try {
         const categories = await Category.find({}).populate('products');
         res.json(categories);
@@ -32,6 +33,7 @@ exports.getAllCategories = async (req, res) => {
 exports.getCategoryById = async (req, res) => {
     try {
         const category = await Category.findById(req.params.id).populate('products');
+        console.log('Categories sent');
         if (!category) {
             return res.status(404).send({ message: 'Category not found' });
         }

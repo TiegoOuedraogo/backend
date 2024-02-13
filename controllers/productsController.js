@@ -24,9 +24,15 @@ exports.getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            return res.status(404).send({ message: 'product not found' });
+            return res.status(404).send({ message: 'product not found' }).populate('product');
         }
-        res.json(product);
+        res.json({
+            product:product,
+            price:product.price,
+            description: product.description,
+            images: product.images,
+            reviews: product.reviews,
+        });
     } catch (error) {
         res.status(500).send(error);
     }

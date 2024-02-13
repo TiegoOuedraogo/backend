@@ -1,6 +1,6 @@
 const User = require('../models/UserModel');
 const Product = require('../models/ProductModel');
-const Order = require('../models/OrderMoldel');
+const Order = require('../models/OrderModel');
 const CartItem = require('../models/CartItemModel');
 const Cart = require ('../models/CartModel');
 const Category = require ('../models/CategoryModel');

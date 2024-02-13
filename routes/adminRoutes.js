@@ -48,6 +48,7 @@ router.post('/category', adminAuth,adminController.createCategory);
 router.put('/category', adminAuth,adminController.updateCategory);
 router.delete('/category', adminAuth,adminController.deleteCategory);
 
+
 // Review management
 router.get('/reviews', adminAuth,adminController.getAllReviews);
 router.get('/review/:id',adminAuth, adminController.getReviewById);
