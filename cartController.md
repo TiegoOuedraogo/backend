@@ -286,3 +286,18 @@ exports.updateItemQuantity = async (req, res) => {
         return res.status(500).json({ message: 'Error updating item quantity', error: error.message });
     }
 };
+
+[
+{
+  "username": "tchico1er",
+  "email": "tchico1er@gmail.com",
+  "password": "Password123",
+  "role": "admin"
+},
+{
+  "username": "johndoe",
+  "email": "johndoe@gmail.com",
+  "password": "Password123",
+  "role": "user"
+}
+]

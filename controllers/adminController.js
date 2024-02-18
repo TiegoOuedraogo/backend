@@ -70,17 +70,27 @@ exports.createProduct = async (req, res) => {
     try {
       const newProduct = new Product({
         name: req.body.name,
+        brand: req.body.brand,
+        manufacturer: req.body.manufacturer,
+        category: req.body.category,
         description: req.body.description,
         price: req.body.price,
-        image: req.body.image,
+        inventory: req.body.inventory,
+        images: req.body.images,
       });
+
+      console.log("before saving the new product", newProduct);
       await newProduct.save();
+      console.log("After saving the new product", newProduct);
       res.status(201).json(newProduct);
     } catch (error) {
+      console.log("saving new product error", error);
       res.status(500).send({ message: 'Error creating product', error: error.message });
     }
-  };
+};
+
   
+
 exports.getAllProducts = async (req, res) => {
     try {
         const products = await Product.find({});
@@ -186,7 +196,7 @@ exports.deleteOrderById = async (req, res) => {
 
 exports.createUserCartItem = async (req, res) => {
     const { productId, quantity } = req.body;
-    const userId = req.user._id; // Assuming you have the user's ID from the auth middleware
+    const userId = req.user._id; 
 
     try {
         let cart = await Cart.findOne({ user: userId });
@@ -214,7 +224,7 @@ exports.createUserCartItem = async (req, res) => {
 };
 
 exports.getUserCartItems = async (req, res) => {
-    const userId = req.user._id; // Assuming you have the user's ID from the auth middleware
+    const userId = req.user._id; 
 
     try {
         const cart = await Cart.findOne({ user: userId }).populate({
@@ -254,8 +264,8 @@ exports.deleteCartItemById = async (req, res) => {
 };
 
 exports.updateCartItemQuantity = async (req, res) => {
-    const { cartItemId, quantity } = req.body; // Assuming you pass the cart item's ID and new quantity
-    const userId = req.user._id; // Assuming you have the user's ID from the auth middleware
+    const { cartItemId, quantity } = req.body; 
+    const userId = req.user._id; 
 
     try {
         const cart = await Cart.findOne({ user: userId });
@@ -275,7 +285,7 @@ exports.updateCartItemQuantity = async (req, res) => {
         // Save the updated cart
         await cart.save();
         
-        // Optionally, populate product details before sending the response
+        //populate product details before sending the response
         const updatedCart = await Cart.findById(cart._id).populate({
             path: 'items.product',
             model: 'Product'
@@ -348,7 +358,7 @@ exports.deleteCartById = async (req, res) => {
 
 
 exports.createCategory = async (req, res) => {
-    const { name } = req.body; // Assuming the category name is passed in the request body
+    const { name } = req.body; 
 
     try {
         const newCategory = new Category({ name });
@@ -386,7 +396,7 @@ exports.getCategoryById = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     const { categoryId } = req.params;
-    const { name } = req.body; // Assuming you're only updating the name of the category
+    const { name } = req.body; 
 
     try {
         const updatedCategory = await Category.findByIdAndUpdate(categoryId, { name }, { new: true });
@@ -424,7 +434,7 @@ exports.getAllComments = async (req, res) => {
     }
 };
 exports.createReview = async (req, res) => {
-    const { productId, userId, rating, comment } = req.body; // Assuming these are passed in the request body
+    const { productId, userId, rating, comment } = req.body;
 
     try {
         const newReview = new Review({
@@ -465,7 +475,7 @@ exports.getReviewById = async (req, res) => {
 
 exports.updateReview = async (req, res) => {
     const { reviewId } = req.params;
-    const { rating, comment } = req.body; // Assuming you're updating the rating and/or comment
+    const { rating, comment } = req.body;
 
     try {
         const updatedReview = await Review.findByIdAndUpdate(reviewId, { rating, comment }, { new: true });

@@ -18,9 +18,11 @@ exports.createUserProfile = async (req, res) => {
 
   
 exports.getUserProfile = async (req, res) => {
+    const userId = req.user.id; 
+    console.log("THe user id", req.user.id)
     try {
-        const userId = req.user.id; 
         const userProfile = await UserProfile.findOne({ userId });
+        console.log("THe user profile", userProfile)
 
         if (!userProfile) {
             return res.status(404).json({ message: 'User profile not found' });
@@ -31,6 +33,7 @@ exports.getUserProfile = async (req, res) => {
         res.status(500).json({ message: 'Error fetching user profile', error: error.message });
     }
 };
+
 
 exports.updateUserProfile = async (req, res) => {
     const userId = req.user.id;
@@ -48,3 +51,4 @@ exports.updateUserProfile = async (req, res) => {
         res.status(500).json({ message: 'Error updating user profile', error: error.message });
     }
 };
+

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
-
+const UserProfile = require('../models/UserProfileModel');
 
 function isValidPassword(password) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -9,9 +9,41 @@ function isValidPassword(password) {
 }
 
 
+// exports.register = async (req, res) => {
+//     try {
+//         const { username, email, password } = req.body;
+
+//         // Validate the plain text password
+//         if (!isValidPassword(password)) {
+//             return res.status(400).json({
+//                 message: 'Password must contain at least 8 characters, one uppercase, one lowercase, and one number.'
+//             });
+//         }
+
+//         // Hash the password
+//         const hashedPassword = await bcrypt.hash(password, 12);
+
+//         // Create a new user with the hashed password
+//         const newUser = new User({
+//             username,
+//             email,
+//             password: hashedPassword,
+//         });
+
+//         // Save the new user
+//         await newUser.save();
+
+//         res.status(201).json({ message: 'User created successfully', user: { id: newUser.id, username: newUser.username, email: newUser.email } });
+//     } catch (error) {
+//         console.error(error); 
+//         res.status(500).json({ message: 'Error registering new user', error: error.message });
+//     }
+// };
+
+
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password,name} = req.body; 
 
         // Validate the plain text password
         if (!isValidPassword(password)) {
@@ -28,18 +60,45 @@ exports.register = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            // ... other fields ...
         });
 
         // Save the new user
         await newUser.save();
 
-        res.status(201).json({ message: 'User created successfully', user: { id: newUser.id, username: newUser.username, email: newUser.email } });
+        // After saving the user, create a profile for this user
+        const newUserProfile = new UserProfile({
+            userId: newUser._id, 
+            name: name || '', 
+            email: email, 
+            // address: address || '',
+            role: 'user', 
+            
+        });
+
+        // Save the new user profile
+        await newUserProfile.save();
+
+        res.status(201).json({
+            message: 'User and profile created successfully',
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUserProfile.role
+            },
+            profile: {
+                id: newUserProfile.id,
+                name: newUserProfile.name,
+                // address: newUserProfile.address
+            }
+        });
     } catch (error) {
-        console.error(error); // Log detailed error
+        console.error(error); 
         res.status(500).json({ message: 'Error registering new user', error: error.message });
     }
 };
+
+
 
 exports.login = async (req, res) => {
     try {
@@ -55,12 +114,19 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
+        // Fetch the user profile to get the role
+        const userProfile = await UserProfile.findOne({ userId: user._id });
+        if (!userProfile) {
+            return res.status(401).json({ message: "User profile not found" });
+        }
+
         // User matched, create JWT payload
         const payload = {
             user: {
                 id: user.id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: userProfile.role
             }
         };
 
@@ -71,7 +137,7 @@ exports.login = async (req, res) => {
             { expiresIn: '24h' },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+                res.json({ token, user: payload.user });
             }
         );
     } catch (err) {
@@ -124,44 +190,3 @@ exports.deleteUserById = async (req, res) => {
         res.status(500).send(error); 
     }
 };
-
-
-//loalhost:3000/api/users/register with Post {
-//     "username": "newuser",
-//    "email": "newuser@example.com",
-//    "password": "NewPassword123",
-//    "profileInfo": {
-//        "name": "New User",
-//        "address": "123 New Street, New City",
-//        "image": "https://example.com/images/profile/newuser12.jpg"
-//    },
-//    "role": "user"
-// }
-
-//login with loalhost:3000/api/users/login
-// {
-//     "email": "newuser@example.com",
-//    "password": "NewPassword123"
-// }
-
-
-
-//loalhost:3000/api/users/register with Post {
-//     "username": "newuser",
-//    "email": "newuser@example.com",
-//    "password": "NewPassword123",
-//    "profileInfo": {
-//        "name": "New User",
-//        "address": "123 New Street, New City",
-//        "image": "https://example.com/images/profile/newuser12.jpg"
-//    },
-//    "role": "user"
-// }
-
-//login with loalhost:3000/api/users/login
-// {
-//     "email": "newuser@example.com",
-//    "password": "NewPassword123"
-// }
-
-

@@ -6,55 +6,57 @@ const adminController = require('../controllers/adminController');
 router.use(adminAuth); 
 
 // User management
-router.get('/users',adminAuth, adminController.getAllUsers);
-router.get('/user/:id',adminAuth, adminController.getUserById);
-router.post('/user', adminAuth,adminController.createUser);
-router.put('/user/:id',adminAuth, adminController.updateUserById);
-router.delete('/user/:id', adminAuth,adminController.deleteUserById);
+router.get('/users', adminController.getAllUsers);
+router.get('/user/:id', adminController.getUserById);
+router.post('/user', adminController.createUser);
+router.put('/user/:id', adminController.updateUserById);
+router.delete('/user/:id', adminController.deleteUserById);
+
 
 // Product management
-router.get('/products', adminAuth,adminController.getAllProducts);
-router.get('/product/:id', adminAuth,adminController.getProductById);
-router.post('/product', adminAuth,adminController.createProduct);
-router.put('/product/:id', adminAuth,adminController.updateProductById);
-router.delete('/product/:id', adminAuth,adminController.deleteProductById);
+router.get('/products', adminController.getAllProducts);
+router.get('/products/:id', adminController.getProductById);
+router.post('/products', adminController.createProduct);
+router.put('/products/:id', adminController.updateProductById);
+router.delete('/products/:id', adminController.deleteProductById);
+
 
 // Order management
-router.get('/orders', adminAuth,adminController.getAllOrders);
-router.get('/order/:id', adminAuth,adminController.getOrderById);
-router.post('/order', adminAuth,adminController.createOrder);
-router.put('/order/:id', adminAuth,adminController.updateOrderById);
-router.delete('/order/:id', adminAuth,adminController.deleteOrderById);
+router.get('/orders', adminController.getAllOrders);
+router.get('/order/:id', adminController.getOrderById);
+router.post('/order', adminController.createOrder);
+router.put('/order/:id', adminController.updateOrderById);
+router.delete('/order/:id', adminController.deleteOrderById);
 
 // CartItem management
-router.get('/cartItems', adminAuth,adminController.getAllCartItems);
-router.post('/cartItem/:id', adminAuth,adminController.createUserCartItem);
-router.get('/cartItem', adminAuth,adminController.getUserCartItems);
-router.get('/cartItem', adminAuth,adminController.getAllCarts);
-router.put('/cartItem', adminAuth,adminController.updateCartItemQuantity);
-router.delete('/cartItem/:id', adminAuth,adminController.deleteCartItemById);
+router.get('/cartItems', adminController.getAllCartItems);
+router.post('/cartItem/:id', adminController.createUserCartItem);
+router.get('/cartItem', adminController.getUserCartItems);
+router.get('/cartItem', adminController.getAllCarts);
+router.put('/cartItem', adminController.updateCartItemQuantity);
+router.delete('/cartItem/:id', adminController.deleteCartItemById);
 
 // Cart management
-router.get('/carts',adminAuth, adminController.getAllCarts);
-router.get('/cart/:id', adminAuth,adminController.getCartById);
-router.post('/cart', adminAuth,adminController.createCart);
-router.put('/cart/:id', adminAuth,adminController.updateCartById);
-router.delete('/cart/:id', adminAuth,adminController.deleteCartById);
+router.get('/carts', adminController.getAllCarts);
+router.get('/cart/:id', adminController.getCartById);
+router.post('/cart', adminController.createCart);
+router.put('/cart/:id', adminController.updateCartById);
+router.delete('/cart/:id', adminController.deleteCartById);
 
 // Category management
-router.get('/categories',adminAuth, adminController.getAllCategories);
-router.get('/category/:id', adminAuth,adminController.getCategoryById);
-router.post('/category', adminAuth,adminController.createCategory);
-router.put('/category', adminAuth,adminController.updateCategory);
-router.delete('/category', adminAuth,adminController.deleteCategory);
+router.get('/categories', adminController.getAllCategories);
+router.get('/category/:id', adminController.getCategoryById);
+router.post('/category', adminController.createCategory);
+router.put('/category', adminController.updateCategory);
+router.delete('/category', adminController.deleteCategory);
 
 
 // Review management
-router.get('/reviews', adminAuth,adminController.getAllReviews);
-router.get('/review/:id',adminAuth, adminController.getReviewById);
-router.post('/review', adminAuth,adminController.createReview);
-router.put('/review', adminAuth,adminController.updateReview);
-router.delete('/review', adminAuth,adminController.deleteReview);
+router.get('/reviews', adminController.getAllReviews);
+router.get('/review/:id', adminController.getReviewById);
+router.post('/review', adminController.createReview);
+router.put('/review', adminController.updateReview);
+router.delete('/review', adminController.deleteReview);
 
 // // Comment management
 // router.get('/comments', adminController.getAllComments);

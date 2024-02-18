@@ -62,15 +62,41 @@ exports.deleteProductById = async (req, res) => {
     }
 };
 
+exports.getProductFilter = async (req, res) => {
+    const { minPrice, maxPrice, brand, color, rating, size, category } = req.query;
+    let query = {};
 
-//to create a product localhost:3000/api/products
-//Post {
-//     "name": "Sample Product",
-//     "description": "This is a sample product description.",
-//     "price": 19.99,
-//     "inventoryCount": 100,
-//     "reviews": ["5f50c31b8e7b5a3fdeabacf6", "5f50c31b8e7b5a3fdeabacf7"],
-//     "category": "5f50c31b8e7b5a3fdeabacf8",
-//     "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"],
-//     "promotions": ["5f50c31b8e7b5a3fdeabacf9", "5f50c31b8e7b5a3fdeabacfa"]
-// }
+    if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = parseFloat(minPrice);
+        if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+    }
+
+    if (brand) {
+        query.brand = brand;
+    }
+
+    if (color) {
+        query.color = color;
+    }
+
+    if (rating) {
+        query.averageRating = { $gte: parseFloat(rating) };
+    }
+
+    if (size) {
+        query.size = size;
+    }
+
+    if (category) {
+        query.category = category; 
+    }
+
+    try {
+        const products = await Product.find(query).lean();
+        res.json(products);
+    } catch (error) {
+        console.error('Failed to fetch filtered products:', error);
+        res.status(500).json({ message: 'Failed to fetch products', error });
+    }
+};
