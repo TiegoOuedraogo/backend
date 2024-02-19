@@ -16,6 +16,7 @@ exports.createUser = async (req, res) => {
         await user.save();
         res.status(201).json(user);
     } catch (error) {
+        console.log("creating a new user error",error)
         res.status(500).send({ message: 'Error creating user', error: error.message });
     }
 };
@@ -43,16 +44,21 @@ exports.deleteUserById = async (req, res) => {
 };
 
 exports.updateUserById = async (req, res) => {
+    console.log(" line 46user req.body")
+
     try {
-        const updateProduct = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updateProduct) {
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedUser) {
+            console.log(" line 50updating user",updatedUser)
             return res.status(404).send({ message: 'User not found' });
         }
         res.send(updatedUser);
     } catch (error) {
+        console.log("line 57 updated user",error) 
         res.status(400).send(error);
     }
 };
+
 
 exports.getUserById = async (req, res) => {
     try {
@@ -68,28 +74,34 @@ exports.getUserById = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
     try {
-      const newProduct = new Product({
-        name: req.body.name,
-        brand: req.body.brand,
-        manufacturer: req.body.manufacturer,
-        category: req.body.category,
-        description: req.body.description,
-        price: req.body.price,
-        inventory: req.body.inventory,
-        images: req.body.images,
-      });
+        const uniqueIdentifier = req.body.uniqueIdentifier || generateUniqueIdentifier();
 
-      console.log("before saving the new product", newProduct);
-      await newProduct.save();
-      console.log("After saving the new product", newProduct);
-      res.status(201).json(newProduct);
+        const newProduct = new Product({
+            name: req.body.name,
+            brand: req.body.brand,
+            manufacturer: req.body.manufacturer,
+            category: req.body.category,
+            uniqueIdentifier: uniqueIdentifier, 
+            description: req.body.description,
+            price: req.body.price,
+            inventory: req.body.inventory,
+            images: req.body.images,
+        });
+
+        console.log("Before saving the new product", newProduct);
+        await newProduct.save();
+        console.log("After saving the new product", newProduct);
+        res.status(201).json(newProduct);
     } catch (error) {
-      console.log("saving new product error", error);
-      res.status(500).send({ message: 'Error creating product', error: error.message });
+        console.log("Saving new product error", error);
+        res.status(500).send({ message: 'Error creating product', error: error.message });
     }
 };
 
-  
+function generateUniqueIdentifier() {
+    return `UID-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
 
 exports.getAllProducts = async (req, res) => {
     try {

@@ -20,14 +20,14 @@ const productSchema = new Schema({
   },
   category: {
     type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: false
+    // ref: 'Category',
+    required: true
   },
-  // uniqueIdentifier: {
-  //   type: String,
-  //   required: true,
-  //   unique: true
-  // },
+  uniqueIdentifier: {
+    type: String,
+    required: true,
+    unique: true
+  },
   description: {
     short: { type: String, required: true },
     long: { type: String, required: true }

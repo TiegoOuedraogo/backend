@@ -46,7 +46,6 @@ connectDB();
 
 
 app.use('/api/private', privateRoutes);
-
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/cart', cartRoutes);
