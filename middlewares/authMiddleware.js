@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
     try {
-        console.log('Headers:', req.headers); 
+        // console.log('Headers:', req.headers); 
         const authHeader = req.header('authorization');
-        console.log('Authorization Header:', authHeader);
+        // console.log('Authorization Header:', authHeader);
 
         if (!authHeader) {
             return res.status(401).send({ message: 'No authorization header' });

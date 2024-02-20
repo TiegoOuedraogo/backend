@@ -44,19 +44,19 @@ exports.deleteUserById = async (req, res) => {
 };
 
 exports.updateUserById = async (req, res) => {
-    console.log(" line 46user req.body")
+    console.log("Attempting to update user with ID:", req.params.id);
 
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedUser) {
-            console.log(" line 50updating user",updatedUser)
+            console.log("Attempting to update user with ID:", req.params.id);
             return res.status(404).send({ message: 'User not found' });
         }
         res.send(updatedUser);
     } catch (error) {
-        console.log("line 57 updated user",error) 
-        res.status(400).send(error);
-    }
+        console.error("Error updating user:", error);
+        res.status(500).send({ message: "Error updating user", error: error.message });
+    }    
 };
 
 

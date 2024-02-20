@@ -11,14 +11,32 @@ exports.createProduct = async (req, res) => {
 };
 
 
+// exports.getAllProducts = async (req, res) => {
+//     try {
+//         const products = await Product.find({});
+//         res.json(products);
+//     } catch (error) {
+//         res.status(500).send(error);
+//     }
+// };
+
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const searchQuery = req.query.query; 
+        let queryObject = {};
+
+        if (searchQuery) {
+            queryObject = { name: { $regex: searchQuery, $options: 'i' } }; 
+        }
+
+        const products = await Product.find(queryObject);
         res.json(products);
     } catch (error) {
+        console.error(error);
         res.status(500).send(error);
     }
 };
+
 
 exports.getProductById = async (req, res) => {
     try {
@@ -34,6 +52,7 @@ exports.getProductById = async (req, res) => {
             reviews: product.reviews,
         });
     } catch (error) {
+        console.error(error)
         res.status(500).send(error);
     }
 };
@@ -100,3 +119,4 @@ exports.getProductFilter = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch products', error });
     }
 };
+

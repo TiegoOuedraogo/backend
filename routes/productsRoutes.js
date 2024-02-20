@@ -11,3 +11,4 @@ router.delete('/:id', productsController.deleteProductById);
 router.get('/fiter', productsController.getProductFilter)
 
 module.exports = router;
+
