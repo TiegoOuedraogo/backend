@@ -4,7 +4,7 @@ const User = require('../models/UserModel');
 
 const adminAuth = (req, res, next) => {
     try {
-        console.log('Headers:', req.headers); 
+        //console.log('Headers:', req.headers); 
         const authHeader = req.header('authorization');
         console.log('Authorization Header:', authHeader);
 
