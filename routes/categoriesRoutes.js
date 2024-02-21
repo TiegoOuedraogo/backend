@@ -11,4 +11,3 @@ router.delete('/:id', categoryController.deleteCategoryById);
 
 module.exports = router;
 
-
