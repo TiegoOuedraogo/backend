@@ -8,39 +8,6 @@ function isValidPassword(password) {
     return passwordRegex.test(password);
 }
 
-
-// exports.register = async (req, res) => {
-//     try {
-//         const { username, email, password } = req.body;
-
-//         // Validate the plain text password
-//         if (!isValidPassword(password)) {
-//             return res.status(400).json({
-//                 message: 'Password must contain at least 8 characters, one uppercase, one lowercase, and one number.'
-//             });
-//         }
-
-//         // Hash the password
-//         const hashedPassword = await bcrypt.hash(password, 12);
-
-//         // Create a new user with the hashed password
-//         const newUser = new User({
-//             username,
-//             email,
-//             password: hashedPassword,
-//         });
-
-//         // Save the new user
-//         await newUser.save();
-
-//         res.status(201).json({ message: 'User created successfully', user: { id: newUser.id, username: newUser.username, email: newUser.email } });
-//     } catch (error) {
-//         console.error(error); 
-//         res.status(500).json({ message: 'Error registering new user', error: error.message });
-//     }
-// };
-
-
 exports.register = async (req, res) => {
     try {
         const { username, email, password,name} = req.body; 
