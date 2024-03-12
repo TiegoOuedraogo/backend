@@ -26,10 +26,19 @@ const userProfileRoutes = require('./routes/userProfileRoutes');
 
 const app = express();
 
-let corsOptions = {
-    origin: 'https://bf-beauty-e-commerce.netlify.app/',
-  };
-  app.use(cors(corsOptions));
+// let corsOptions = {
+//     origin: 'https://bf-beauty-e-commerce.netlify.app/',
+//   };
+
+//   app.use(cors(corsOptions));
+
+app.use(cors());
+
+
+
+
+
+
 
 const PORT = process.env.PORT || 5000;
 // Middlewares
